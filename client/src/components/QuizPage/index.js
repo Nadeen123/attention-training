@@ -1,4 +1,6 @@
 import React, { Component, Fragment } from "react"
+import { connect } from "react-redux"
+import { incrementCounter, decrementCounter } from "../../actions"
 import Button from "../sharedComponent/Button"
 import BackButton from "../sharedComponent/BackButton"
 import Card from "../Card"
@@ -10,10 +12,10 @@ import Swal from "sweetalert2"
 import StyleSwal from "./swalStyle"
 import { CardsAnimation } from "../Card/style"
 import Confetti from "react-confetti"
+import { bindActionCreators } from "redux"
 
 class Quiz extends Component {
   state = {
-    counter: 1,
     options: "",
     score: [],
     percent: 0,
@@ -31,22 +33,22 @@ class Quiz extends Component {
   clicked = ({ target }) => {
     const { name } = target
     const { score } = this.state
-    score[this.state.counter - 1] = parseInt(name)
+    score[this.props.counter - 1] = parseInt(name)
+    this.props.incrementCounter()
     this.setState(
       {
         score: score,
-        flag: 1,
-        counter: this.state.counter + 1
+        flag: 1
       },
       () => {
         this.setState({ flag: 0 })
       }
     )
 
-    if (this.state.counter === 9) {
+    if (this.props.counter === 9) {
       this.setState({ percent: 50 })
     }
-    if (this.state.counter === 18) {
+    if (this.props.counter === 18) {
       let inattentionScore = 0
       let hyperactivityScore = 0
       let totalScore = 0
@@ -65,7 +67,8 @@ class Quiz extends Component {
   close = () => {
     Swal.fire({
       title: "Are you sure you want to exit?",
-      text: "your answers will be lost, you will not be able to know your ADHD type!",
+      text:
+        "your answers will be lost, you will not be able to know your ADHD type!",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
@@ -90,8 +93,12 @@ class Quiz extends Component {
         <Button
           colorhover="#fff"
           text_align="left"
-          background={this.state.score[this.state.counter - 1] === 0 ? "#ED6237" : "#fff"}
-          color={this.state.score[this.state.counter - 1] === 0 ? "#fff" : "#000"}
+          background={
+            this.state.score[this.props.counter - 1] === 0 ? "#ED6237" : "#fff"
+          }
+          color={
+            this.state.score[this.props.counter - 1] === 0 ? "#fff" : "#000"
+          }
           box_shadow="unset"
           border="3px solid #E8EEF4"
           border_radius="20px"
@@ -105,9 +112,13 @@ class Quiz extends Component {
         </Button>
         <Button
           colorhover="#fff"
-          color={this.state.score[this.state.counter - 1] === 1 ? "#fff" : "#000"}
+          color={
+            this.state.score[this.props.counter - 1] === 1 ? "#fff" : "#000"
+          }
           text_align="left"
-          background={this.state.score[this.state.counter - 1] === 1 ? "#ED6237" : "#fff"}
+          background={
+            this.state.score[this.props.counter - 1] === 1 ? "#ED6237" : "#fff"
+          }
           box_shadow="unset"
           border="3px solid #E8EEF4"
           border_radius="20px"
@@ -119,10 +130,14 @@ class Quiz extends Component {
           B&nbsp; Rarely
         </Button>
         <Button
-          color={this.state.score[this.state.counter - 1] === 2 ? "#fff" : "#000"}
+          color={
+            this.state.score[this.props.counter - 1] === 2 ? "#fff" : "#000"
+          }
           colorhover="#fff"
           text_align="left"
-          background={this.state.score[this.state.counter - 1] === 2 ? "#ED6237" : "#fff"}
+          background={
+            this.state.score[this.props.counter - 1] === 2 ? "#ED6237" : "#fff"
+          }
           box_shadow="unset"
           border="3px solid #E8EEF4"
           border_radius="20px"
@@ -134,10 +149,14 @@ class Quiz extends Component {
           C&nbsp; Sometimes
         </Button>
         <Button
-          color={this.state.score[this.state.counter - 1] === 3 ? "#fff" : "#000"}
+          color={
+            this.state.score[this.props.counter - 1] === 3 ? "#fff" : "#000"
+          }
           text_align="left"
           colorhover="#fff"
-          background={this.state.score[this.state.counter - 1] === 3 ? "#ED6237" : "#fff"}
+          background={
+            this.state.score[this.props.counter - 1] === 3 ? "#ED6237" : "#fff"
+          }
           box_shadow="unset"
           border="3px solid #E8EEF4"
           border_radius="20px"
@@ -148,17 +167,20 @@ class Quiz extends Component {
         >
           D&nbsp; Often
         </Button>
-        {this.state.counter > 1 ? <CardsAnimation direction={direction} /> : null}
+        {this.props.counter > 1 ? (
+          <CardsAnimation direction={direction} />
+        ) : null}
       </Fragment>
     )
   }
 
   setCounter = () => {
-    if (this.state.counter > 1) this.setState({ counter: this.state.counter - 1 })
+    if (this.props.counter > 1) this.props.decrementCounter()
     else this.props.history.push("/quiz-instructions")
   }
   render() {
-    const question = questions[this.state.counter - 1]
+    console.log(this.props.counter, "00")
+    const question = questions[this.props.counter - 1]
     let { counter } = this.state
     return this.state.flag ? null : this.state.percent === 50 ? (
       <CircleProgressBar
@@ -206,12 +228,15 @@ class Quiz extends Component {
             history={this.props.history}
           ></BackButton>
           <Close type="close" onClick={this.close} />
-          <ProgressBar margin="auto 10%" counter={this.state.counter}></ProgressBar>
+          <ProgressBar
+            margin="auto 10%"
+            counter={this.props.counter}
+          ></ProgressBar>
         </div>
         <Card
           question={question}
           options={this.options()}
-          className={this.state.counter !== 10 ? "slide-card" : null}
+          className={this.props.counter !== 10 ? "slide-card" : null}
           info={
             <div>
               <p
@@ -233,4 +258,17 @@ class Quiz extends Component {
     )
   }
 }
-export default Quiz
+const mapStateToProps = state => {
+  return {
+    counter: state.counter
+  }
+}
+
+const mapAction = dispatch => {
+  return bindActionCreators({ incrementCounter, decrementCounter }, dispatch)
+}
+
+export default connect(
+  mapStateToProps,
+  mapAction
+)(Quiz)
