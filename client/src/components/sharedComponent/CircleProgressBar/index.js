@@ -56,7 +56,7 @@ class CircleProgressBar extends React.Component {
             {this.props.buttonName}
           </Button>
         </ProgressPage>
-      </Container >
+      </Container>
     )
   }
 }
