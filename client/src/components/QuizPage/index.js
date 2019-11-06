@@ -1,6 +1,14 @@
 import React, { Component, Fragment } from "react"
 import { connect } from "react-redux"
-import { incrementCounter, decrementCounter, addAnswer, addPercent, refreshFlag } from "../../actions"
+import {
+  incrementCounter,
+  decrementCounter,
+  addAnswer,
+  addPercent,
+  refreshFlag,
+  totalScore,
+  setIsCompleted
+} from "../../actions"
 import Button from "../sharedComponent/Button"
 import BackButton from "../sharedComponent/BackButton"
 import Card from "../Card"
@@ -15,10 +23,6 @@ import Confetti from "react-confetti"
 import { bindActionCreators } from "redux"
 
 class Quiz extends Component {
-  state = {
-    question: ""
-  }
-
   /**
    * @param string value of choice
    * get value of choise to calclate score from {event.target,name}
@@ -26,7 +30,17 @@ class Quiz extends Component {
    * increase counter 1
    * check half question and last question to show circle progress bar
    */
+  componentDidMount() {
+    console.log(this.props.isCompleted, "77777777")
 
+    let i = this.props.counter - 1
+    while (i--) {
+      console.log(this.props.counter, i)
+      this.props.decrementCounter()
+    }
+
+    // this.props.totalScore(0, 0, 0)
+  }
   clicked = ({ target }) => {
     const { name } = target
 
@@ -45,11 +59,13 @@ class Quiz extends Component {
       for (let i = 0; i < 9; ++i) inattentionScore += score[i]
       for (let i = 9; i < 18; ++i) hyperactivityScore += score[i]
       totalScore = inattentionScore + hyperactivityScore
+      this.props.totalScore(inattentionScore, hyperactivityScore, totalScore)
       localStorage.setItem("inattentionScore", inattentionScore)
       localStorage.setItem("hyperactivityScore", hyperactivityScore)
       localStorage.setItem("totalScore", totalScore)
       localStorage.setItem("score", this.props.score)
       localStorage.setItem("complete", true)
+      this.props.setIsCompleted(true)
       this.props.addPercent(100)
     }
   }
@@ -63,7 +79,8 @@ class Quiz extends Component {
       confirmButtonText: "Yes!"
     }).then(result => {
       if (result.value) {
-        localStorage.clear()
+        this.props.totalScore(0, 0, 0) // localStorage.clear()
+        this.props.setIsCompleted(false)
         localStorage.setItem("complete", false)
         this.props.history.push("/dashboard")
       } else {
@@ -145,6 +162,7 @@ class Quiz extends Component {
   }
 
   setCounter = () => {
+    console.log(this.props.counter, "01111111")
     if (this.props.counter > 1) this.props.decrementCounter()
     else this.props.history.push("/quiz-instructions")
   }
@@ -152,7 +170,6 @@ class Quiz extends Component {
     if (this.props.flag) this.props.refreshFlag()
     console.log(this.props.flag, "50000")
     const question = questions[this.props.counter - 1]
-    let { counter } = this.state
     return this.props.flag ? null : this.props.percent === 50 ? (
       <CircleProgressBar
         title="Good job!"
@@ -225,12 +242,16 @@ const mapStateToProps = state => {
     counter: state.counter,
     score: state.score,
     percent: state.percent,
-    flag: state.flag
+    flag: state.flag,
+    isCompleted: state.isCompleted
   }
 }
 
 const mapAction = dispatch => {
-  return bindActionCreators({ incrementCounter, decrementCounter, addAnswer, addPercent, refreshFlag }, dispatch)
+  return bindActionCreators(
+    { incrementCounter, decrementCounter, addAnswer, addPercent, refreshFlag, totalScore, setIsCompleted },
+    dispatch
+  )
 }
 
 export default connect(

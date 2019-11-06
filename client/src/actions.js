@@ -29,4 +29,23 @@ const refreshFlag = () => {
     type: "REFRESH_FLAG"
   }
 }
-export { incrementCounter, decrementCounter, addAnswer, addPercent, refreshFlag }
+const totalScore = (inattentionScore, hyperactivityScore, totalScore) => {
+  return {
+    type: "TOTAL_SCORE",
+    inattentionScore,
+    hyperactivityScore,
+    totalScore
+  }
+}
+const setIsCompleted = isCompleted => {
+  return {
+    type: "IS_COMPLETED",
+    isCompleted
+  }
+}
+const restart = () => {
+  return {
+    type: "RESTART"
+  }
+}
+export { incrementCounter, decrementCounter, addAnswer, addPercent, refreshFlag, totalScore, setIsCompleted, restart }

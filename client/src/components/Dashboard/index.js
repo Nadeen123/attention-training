@@ -17,14 +17,17 @@ import secondLogo from "../../assets/icon2.png"
 import StyledLink from "../sharedComponent/Button"
 import restartVector from "../../assets/restart.png"
 import aboutUs from "../../assets/AboutUs.png"
-
-const Dashboard = ({ history }) => {
+import { connect } from "react-redux"
+import { bindActionCreators } from "redux"
+import { restart } from "../../actions"
+const Dashboard = ({ history, ...props }) => {
+  console.log(props, "000000")
   return (
     <>
       <BackButton history={history}></BackButton>
       <PageWrapper>
         <Header>Dashboard</Header>
-        {localStorage.getItem("complete") === "true" ? (
+        {props.isCompleted ? (
           <>
             {/* card1 */}
             <DashboardCard>
@@ -79,23 +82,11 @@ const Dashboard = ({ history }) => {
         </DashboardCard>
         {/* buttons */}
         <Buttuns>
-          <StyledLink
-            background="#AA27D6"
-            width="173px"
-            fontSize="20px"
-            // desktopmargin="5rem 27rem 26rem"
-            to="/quiz"
-          >
+          <StyledLink background="#AA27D6" width="173px" fontSize="20px" to="/quiz" onClick={props.restart}>
             <RestartImg src={restartVector} />
             RESTART TEST
           </StyledLink>
-          <StyledLink
-            background="#ED6237"
-            width="172px"
-            fontSize="20px"
-            // desktopmargin="-20rem 27rem 26rem"
-            to="/about-us"
-          >
+          <StyledLink background="#ED6237" width="172px" fontSize="20px" to="/about-us">
             <AboutImg src={aboutUs} />
             ABOUT US
           </StyledLink>
@@ -105,4 +96,13 @@ const Dashboard = ({ history }) => {
   )
 }
 
-export default Dashboard
+const mapAction = dispatch => {
+  return bindActionCreators({ restart }, dispatch)
+}
+const mapState = state => ({
+  isCompleted: state.isCompleted
+})
+export default connect(
+  mapState,
+  mapAction
+)(Dashboard)

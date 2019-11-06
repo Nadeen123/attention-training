@@ -1,8 +1,13 @@
 const initialState = {
   counter: 1,
-  score: [],
+  score: localStorage.getItem("score") ? localStorage.getItem("score") : [],
   percent: 0,
-  flag: 0 // this state is defined to refresh the page
+  question: "",
+  inattentionScore: localStorage.getItem("inattentionScore") || 0,
+  hyperactivityScore: localStorage.getItem("hyperactivityScore") || 0,
+  totalScore: localStorage.getItem("totalScore") || 0,
+  flag: 0, // this state is defined to refresh the page
+  isCompleted: localStorage.getItem("complete") || false
 }
 
 function reducer(state = initialState, action) {
@@ -24,6 +29,8 @@ function reducer(state = initialState, action) {
           score: state.score.concat([action.answer])
         }
       } else {
+        console.log(state.score, "99999999")
+
         return {
           ...state,
           score: state.score.map((answer, questionNumber) => {
@@ -41,7 +48,27 @@ function reducer(state = initialState, action) {
         ...state,
         flag: !state.flag
       }
-
+    case "TOTAL_SCORE":
+      return {
+        ...state,
+        inattentionScore: action.inattentionScore,
+        hyperactivityScore: action.hyperactivityScore,
+        totalScore: action.totalScore
+      }
+    case "IS_COMPLETED":
+      return {
+        ...state,
+        isCompleted: action.isCompleted
+      }
+    case "RESTART":
+      return {
+        ...state,
+        inattentionScore: 0,
+        hyperactivityScore: 0,
+        totalScore: 0,
+        isCompleted: false,
+        score: []
+      }
     default:
       return state
   }
