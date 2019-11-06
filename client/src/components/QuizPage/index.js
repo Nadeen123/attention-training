@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react"
 import { connect } from "react-redux"
-import { incrementCounter, decrementCounter, addAnswer, addPercent } from "../../actions"
+import { incrementCounter, decrementCounter, addAnswer, addPercent, refreshFlag } from "../../actions"
 import Button from "../sharedComponent/Button"
 import BackButton from "../sharedComponent/BackButton"
 import Card from "../Card"
@@ -13,11 +13,9 @@ import StyleSwal from "./swalStyle"
 import { CardsAnimation } from "../Card/style"
 import Confetti from "react-confetti"
 import { bindActionCreators } from "redux"
-import { stat } from "fs"
 
 class Quiz extends Component {
   state = {
-    flag: 0, // this state is defined to refresh the page
     question: ""
   }
 
@@ -28,21 +26,13 @@ class Quiz extends Component {
    * increase counter 1
    * check half question and last question to show circle progress bar
    */
+
   clicked = ({ target }) => {
     const { name } = target
-    // const { score } = this.state;
-    // score[this.props.counter - 1] = parseInt(name);
 
     this.props.addAnswer(this.props.counter, parseInt(name))
     this.props.incrementCounter()
-    this.setState(
-      {
-        flag: 1
-      },
-      () => {
-        this.setState({ flag: 0 })
-      }
-    )
+    this.props.refreshFlag()
 
     if (this.props.counter === 9) {
       this.props.addPercent(50)
@@ -159,9 +149,11 @@ class Quiz extends Component {
     else this.props.history.push("/quiz-instructions")
   }
   render() {
+    if (this.props.flag) this.props.refreshFlag()
+    console.log(this.props.flag, "50000")
     const question = questions[this.props.counter - 1]
     let { counter } = this.state
-    return this.state.flag ? null : this.props.percent === 50 ? (
+    return this.props.flag ? null : this.props.percent === 50 ? (
       <CircleProgressBar
         title="Good job!"
         description=" you are half way there."
@@ -232,12 +224,13 @@ const mapStateToProps = state => {
   return {
     counter: state.counter,
     score: state.score,
-    percent: state.percent
+    percent: state.percent,
+    flag: state.flag
   }
 }
 
 const mapAction = dispatch => {
-  return bindActionCreators({ incrementCounter, decrementCounter, addAnswer, addPercent }, dispatch)
+  return bindActionCreators({ incrementCounter, decrementCounter, addAnswer, addPercent, refreshFlag }, dispatch)
 }
 
 export default connect(
