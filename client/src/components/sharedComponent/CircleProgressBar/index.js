@@ -1,5 +1,5 @@
-import React from "react";
-import { connect } from "react-redux";
+import React from "react"
+import { connect } from "react-redux"
 import {
   Container,
   ProgressBarDiv,
@@ -10,28 +10,28 @@ import {
   TrueIcon,
   TrueIconBackground,
   Counter
-} from "./style.CircleProgressBar";
-import Button from "../Button";
+} from "./style.CircleProgressBar"
+import Button from "../Button"
 
 class CircleProgressBar extends React.Component {
   state = {
     percent: 0
-  };
+  }
 
   componentDidMount() {
-    if (this.state.percent < 100 && this.props.percentRate === parseInt(50)) {
+    if (this.state.percent < 100 && this.props.percent=== 50) {
       setInterval(() => {
         if (this.state.percent < 50) {
-          this.setState({ percent: this.state.percent + 1 });
+          this.setState({ percent: this.state.percent + 1 })
         }
-      }, 20);
+      }, 20)
     } else {
-      if (this.state.percent < 100 && this.props.percentRate === parseInt(100)) {
+      if (this.state.percent < 100 && this.props.percent === 100) {
         setInterval(() => {
           if (this.state.percent < 100) {
-            this.setState({ percent: this.state.percent + 1 });
+            this.setState({ percent: this.state.percent + 1 })
           }
-        }, 20);
+        }, 20)
       }
     }
   }
@@ -44,7 +44,7 @@ class CircleProgressBar extends React.Component {
             <TrueIcon type="check-circle" theme="filled" twoToneColor="#70B1FA" />
           </TrueIconBackground>
           <ProgressBarDiv>
-            <Percent>{this.props.percent}</Percent>
+            <Percent>{this.props.percent}%</Percent>
             <Counter>{this.props.counter - 1} of 18</Counter>
             <ProgressBarStyle type="circle" percent={this.state.percent} showInfo={false} fill="green" />
           </ProgressBarDiv>
@@ -58,17 +58,18 @@ class CircleProgressBar extends React.Component {
           </Button>
         </ProgressPage>
       </Container>
-    );
+    )
   }
 }
 
 const mapStateToProps = state => {
   return {
-    counter: state.counter
-  };
-};
+    counter: state.counter,
+    percent: state.percent
+  }
+}
 
 export default connect(
   mapStateToProps,
   null
-)(CircleProgressBar);
+)(CircleProgressBar)

@@ -1,8 +1,8 @@
 const incrementCounter = () => {
   return {
     type: "INCREMENT_COUNTER"
-  };
-};
+  }
+}
 
 const decrementCounter = () => {
   return {
