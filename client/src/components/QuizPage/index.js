@@ -1,25 +1,25 @@
-import React, { Component, Fragment } from "react"
-import Button from "../sharedComponent/Button"
-import BackButton from "../sharedComponent/BackButton"
-import Card from "../Card"
-import ProgressBar from "../sharedComponent/ProgressBar"
-import CircleProgressBar from "../sharedComponent/CircleProgressBar/"
-import Close from "./closeButton"
-import questions from "../../Questions"
-import Swal from "sweetalert2"
-import StyleSwal from "./swalStyle"
-import { CardsAnimation } from "../Card/style"
-import Confetti from "react-confetti"
+import React, { Component, Fragment } from "react";
+import { connect } from "react-redux";
+import { incrementCounter, decrementCounter, addAnswer, addPercent } from "../../actions";
+import Button from "../sharedComponent/Button";
+import BackButton from "../sharedComponent/BackButton";
+import Card from "../Card";
+import ProgressBar from "../sharedComponent/ProgressBar";
+import CircleProgressBar from "../sharedComponent/CircleProgressBar/";
+import Close from "./closeButton";
+import questions from "../../Questions";
+import Swal from "sweetalert2";
+import StyleSwal from "./swalStyle";
+import { CardsAnimation } from "../Card/style";
+import Confetti from "react-confetti";
+import { bindActionCreators } from "redux";
+import { stat } from "fs";
 
 class Quiz extends Component {
   state = {
-    counter: 1,
-    options: "",
-    score: [],
-    percent: 0,
     flag: 0, // this state is defined to refresh the page
     question: ""
-  }
+  };
 
   /**
    * @param string value of choice
@@ -29,39 +29,40 @@ class Quiz extends Component {
    * check half question and last question to show circle progress bar
    */
   clicked = ({ target }) => {
-    const { name } = target
-    const { score } = this.state
-    score[this.state.counter - 1] = parseInt(name)
+    const { name } = target;
+    // const { score } = this.state;
+    // score[this.props.counter - 1] = parseInt(name);
+
+    this.props.addAnswer(this.props.counter, parseInt(name));
+    this.props.incrementCounter();
     this.setState(
       {
-        score: score,
-        flag: 1,
-        counter: this.state.counter + 1
+        flag: 1
       },
       () => {
-        this.setState({ flag: 0 })
+        this.setState({ flag: 0 });
       }
-    )
+    );
 
-    if (this.state.counter === 9) {
-      this.setState({ percent: 50 })
+    if (this.props.counter === 9) {
+      this.props.addPercent(50);
     }
-    if (this.state.counter === 18) {
-      let inattentionScore = 0
-      let hyperactivityScore = 0
-      let totalScore = 0
-      const { score } = this.state
-      for (let i = 0; i < 9; ++i) inattentionScore += score[i]
-      for (let i = 9; i < 18; ++i) hyperactivityScore += score[i]
-      totalScore = inattentionScore + hyperactivityScore
-      localStorage.setItem("inattentionScore", inattentionScore)
-      localStorage.setItem("hyperactivityScore", hyperactivityScore)
-      localStorage.setItem("totalScore", totalScore)
-      localStorage.setItem("score", this.state.score)
-      localStorage.setItem("complete", true)
-      this.setState({ percent: 100 })
+    if (this.props.counter === 18) {
+      let inattentionScore = 0;
+      let hyperactivityScore = 0;
+      let totalScore = 0;
+      const score = this.props.score;
+      for (let i = 0; i < 9; ++i) inattentionScore += score[i];
+      for (let i = 9; i < 18; ++i) hyperactivityScore += score[i];
+      totalScore = inattentionScore + hyperactivityScore;
+      localStorage.setItem("inattentionScore", inattentionScore);
+      localStorage.setItem("hyperactivityScore", hyperactivityScore);
+      localStorage.setItem("totalScore", totalScore);
+      localStorage.setItem("score", this.props.score);
+      localStorage.setItem("complete", true);
+      this.props.addPercent(100);
     }
-  }
+  };
   close = () => {
     Swal.fire({
       title: "Are you sure you want to exit?",
@@ -72,26 +73,26 @@ class Quiz extends Component {
       confirmButtonText: "Yes!"
     }).then(result => {
       if (result.value) {
-        localStorage.clear()
-        localStorage.setItem("complete", false)
-        this.props.history.push("/dashboard")
+        localStorage.clear();
+        localStorage.setItem("complete", false);
+        this.props.history.push("/dashboard");
       } else {
       }
-    })
-  }
+    });
+  };
 
   /**
    * @private
    */
   options() {
-    const direction = ["right", "left"][parseInt(Math.random() * 2)]
+    const direction = ["right", "left"][parseInt(Math.random() * 2)];
     return (
       <Fragment>
         <Button
           colorhover="#fff"
           text_align="left"
-          background={this.state.score[this.state.counter - 1] === 0 ? "#ED6237" : "#fff"}
-          color={this.state.score[this.state.counter - 1] === 0 ? "#fff" : "#000"}
+          background={this.props.score[this.props.counter - 1] === 0 ? "#ED6237" : "#fff"}
+          color={this.props.score[this.props.counter - 1] === 0 ? "#fff" : "#000"}
           box_shadow="unset"
           border="3px solid #E8EEF4"
           border_radius="20px"
@@ -105,9 +106,9 @@ class Quiz extends Component {
         </Button>
         <Button
           colorhover="#fff"
-          color={this.state.score[this.state.counter - 1] === 1 ? "#fff" : "#000"}
+          color={this.props.score[this.props.counter - 1] === 1 ? "#fff" : "#000"}
           text_align="left"
-          background={this.state.score[this.state.counter - 1] === 1 ? "#ED6237" : "#fff"}
+          background={this.props.score[this.props.counter - 1] === 1 ? "#ED6237" : "#fff"}
           box_shadow="unset"
           border="3px solid #E8EEF4"
           border_radius="20px"
@@ -119,10 +120,10 @@ class Quiz extends Component {
           B&nbsp; Rarely
         </Button>
         <Button
-          color={this.state.score[this.state.counter - 1] === 2 ? "#fff" : "#000"}
+          color={this.props.score[this.props.counter - 1] === 2 ? "#fff" : "#000"}
           colorhover="#fff"
           text_align="left"
-          background={this.state.score[this.state.counter - 1] === 2 ? "#ED6237" : "#fff"}
+          background={this.props.score[this.props.counter - 1] === 2 ? "#ED6237" : "#fff"}
           box_shadow="unset"
           border="3px solid #E8EEF4"
           border_radius="20px"
@@ -134,10 +135,10 @@ class Quiz extends Component {
           C&nbsp; Sometimes
         </Button>
         <Button
-          color={this.state.score[this.state.counter - 1] === 3 ? "#fff" : "#000"}
+          color={this.props.score[this.props.counter - 1] === 3 ? "#fff" : "#000"}
           text_align="left"
           colorhover="#fff"
-          background={this.state.score[this.state.counter - 1] === 3 ? "#ED6237" : "#fff"}
+          background={this.props.score[this.props.counter - 1] === 3 ? "#ED6237" : "#fff"}
           box_shadow="unset"
           border="3px solid #E8EEF4"
           border_radius="20px"
@@ -148,31 +149,30 @@ class Quiz extends Component {
         >
           D&nbsp; Often
         </Button>
-        {this.state.counter > 1 ? <CardsAnimation direction={direction} /> : null}
+        {this.props.counter > 1 ? <CardsAnimation direction={direction} /> : null}
       </Fragment>
-    )
+    );
   }
 
   setCounter = () => {
-    if (this.state.counter > 1) this.setState({ counter: this.state.counter - 1 })
-    else this.props.history.push("/quiz-instructions")
-  }
+    if (this.props.counter > 1) this.props.decrementCounter();
+    else this.props.history.push("/quiz-instructions");
+  };
   render() {
-    const question = questions[this.state.counter - 1]
-    let { counter } = this.state
-    return this.state.flag ? null : this.state.percent === 50 ? (
+    const question = questions[this.props.counter - 1];
+    let { counter } = this.state;
+    return this.state.flag ? null : this.props.percent === 50 ? (
       <CircleProgressBar
-        counter={counter - 1}
         percentRate={50}
         percent="50%"
         title="Good job!"
         description=" you are half way there."
         buttonName="LET’S KEEP GOING!"
         onClick={() => {
-          this.setState({ percent: 51 })
+          this.props.addPercent(51);
         }}
       />
-    ) : this.state.percent === 100 ? (
+    ) : this.props.percent === 100 ? (
       <Fragment>
         <Confetti
           style={{
@@ -180,7 +180,6 @@ class Quiz extends Component {
           }}
         />
         <CircleProgressBar
-          counter={counter - 1}
           percentRate={100}
           percent="100%"
           title="You are awesome!"
@@ -191,7 +190,7 @@ class Quiz extends Component {
           }}
           buttonName="See result"
           onClick={() => {
-            this.setState({ percent: 101 })
+            this.props.addPercent(101);
           }}
         />
       </Fragment>
@@ -206,7 +205,7 @@ class Quiz extends Component {
             history={this.props.history}
           ></BackButton>
           <Close type="close" onClick={this.close} />
-          <ProgressBar margin="auto 10%" counter={this.state.counter}></ProgressBar>
+          <ProgressBar margin="auto 10%" counter={this.props.counter}></ProgressBar>
         </div>
         <Card
           question={question}
@@ -230,7 +229,22 @@ class Quiz extends Component {
           }
         ></Card>
       </div>
-    )
+    );
   }
 }
-export default Quiz
+const mapStateToProps = state => {
+  return {
+    counter: state.counter,
+    score: state.score,
+    percent: state.percent
+  };
+};
+
+const mapAction = dispatch => {
+  return bindActionCreators({ incrementCounter, decrementCounter, addAnswer, addPercent }, dispatch);
+};
+
+export default connect(
+  mapStateToProps,
+  mapAction
+)(Quiz);
