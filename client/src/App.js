@@ -1,17 +1,20 @@
-import React, { Fragment } from "react"
-import "./App.css"
-import Router from "./components"
-import GlobalStyle from "./components/GlobalComponent"
-import BackTop from "./components/sharedComponent/BackTop/"
+import React, { Fragment } from "react";
+import { Provider } from "react-redux";
+import "./App.css";
+import store from "./redux/store";
+import Router from "./components";
+import GlobalStyle from "./components/GlobalComponent";
+import BackTop from "./components/sharedComponent/BackTop/";
 
 function App() {
+  // console.log(store.getState());
   return (
-    <Fragment>
+    <Provider store={store}>
       <GlobalStyle />
       <BackTop />
       <Router />
-    </Fragment>
-  )
+    </Provider>
+  );
 }
 
-export default App
+export default App;

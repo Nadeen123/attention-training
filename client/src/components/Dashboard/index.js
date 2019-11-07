@@ -1,5 +1,5 @@
-import React from "react"
-import BackButton from "../sharedComponent/BackButton"
+import React, { Fragment } from "react";
+import BackButton from "../sharedComponent/BackButton";
 import {
   Header,
   DashboardCard,
@@ -11,21 +11,24 @@ import {
   Buttuns,
   RestartImg,
   AboutImg
-} from "./DashboardStyledComponent"
-import cardLogo from "../../assets/icon.png"
-import secondLogo from "../../assets/icon2.png"
-import StyledLink from "../sharedComponent/Button"
-import restartVector from "../../assets/restart.png"
-import aboutUs from "../../assets/AboutUs.png"
+} from "./DashboardStyledComponent";
+import cardLogo from "../../assets/icon.png";
+import secondLogo from "../../assets/icon2.png";
+import StyledLink from "../sharedComponent/Button";
+import restartVector from "../../assets/restart.png";
+import aboutUs from "../../assets/AboutUs.png";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { restart } from "../../redux/actionCreators";
 
-const Dashboard = ({ history }) => {
+const Dashboard = ({ history, ...props }) => {
   return (
-    <>
+    <Fragment>
       <BackButton history={history}></BackButton>
       <PageWrapper>
         <Header>Dashboard</Header>
-        {localStorage.getItem("complete") === "true" ? (
-          <>
+        {props.isCompleted ? (
+          <Fragment>
             {/* card1 */}
             <DashboardCard>
               <Titlewrap>
@@ -63,7 +66,7 @@ const Dashboard = ({ history }) => {
                 SEE BASICS
               </StyledLink>
             </DashboardCard>{" "}
-          </>
+          </Fragment>
         ) : null}
 
         {/* card3 */}
@@ -79,30 +82,27 @@ const Dashboard = ({ history }) => {
         </DashboardCard>
         {/* buttons */}
         <Buttuns>
-          <StyledLink
-            background="#AA27D6"
-            width="173px"
-            fontSize="20px"
-            // desktopmargin="5rem 27rem 26rem"
-            to="/quiz"
-          >
+          <StyledLink background="#AA27D6" width="173px" fontSize="20px" to="/quiz" onClick={props.restart}>
             <RestartImg src={restartVector} />
             RESTART TEST
           </StyledLink>
-          <StyledLink
-            background="#ED6237"
-            width="172px"
-            fontSize="20px"
-            // desktopmargin="-20rem 27rem 26rem"
-            to="/about-us"
-          >
+          <StyledLink background="#ED6237" width="172px" fontSize="20px" to="/about-us">
             <AboutImg src={aboutUs} />
             ABOUT US
           </StyledLink>
         </Buttuns>
       </PageWrapper>
-    </>
-  )
-}
+    </Fragment>
+  );
+};
 
-export default Dashboard
+const mapAction = dispatch => {
+  return bindActionCreators({ restart }, dispatch);
+};
+const mapState = state => ({
+  isCompleted: state.score.isCompleted
+});
+export default connect(
+  mapState,
+  mapAction
+)(Dashboard);

@@ -1,5 +1,5 @@
-import React from "react"
-import { StyledCard as Card, CardWrapper } from "./style"
+import React from "react";
+import { StyledCard as Card, CardWrapper } from "./style";
 
 const DivCard = ({ info, bg, color, onClick, className, display, ...props }) => {
   return (
@@ -35,6 +35,6 @@ const DivCard = ({ info, bg, color, onClick, className, display, ...props }) => 
         {info}
       </Card>
     </CardWrapper>
-  )
-}
-export default DivCard
+  );
+};
+export default DivCard;

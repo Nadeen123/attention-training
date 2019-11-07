@@ -1,40 +1,42 @@
-import React, { Component } from "react"
-import Button from "../sharedComponent/Button"
-import BackButton from "../sharedComponent/BackButton"
-import Card from "../Card"
-import ProgressBar from "../sharedComponent/ProgressBar"
-import image from "../../assets/quizInst.png"
-
+import React, { Component, Fragment } from "react";
+import Button from "../sharedComponent/Button";
+import { connect } from "react-redux";
+import BackButton from "../sharedComponent/BackButton";
+import Card from "../Card";
+import ProgressBar from "../sharedComponent/ProgressBar";
+import image from "../../assets/quizInst.png";
+import { bindActionCreators } from "redux";
+import { incrementInstructionsCounter, decrementInstructionsCounter } from "../../redux/actionCreators";
 class QuizInstructions extends Component {
   state = {
-    counter: 0,
     instructions: [
       "Attention Training wants to help you live better. The first step is understanding whether or not you may have the superpowers of ADHD!",
       "In order to do this, we’ll ask a few questions to get to know you better. Don’t worry! It only takes about 3 minutes to complete.",
       "After you finish the quiz, we will provide you with the resources you need to harness your superpowers!",
       "Ready to get you know your superpowers?"
     ]
-  }
+  };
 
   onClick = () => {
-    this.setState({ counter: this.state.counter + 1 }, () => {
-      if (this.state.counter === 4) this.props.history.push("/quiz")
-    })
-  }
+    this.props.incrementInstructionsCounter();
+    if (this.props.instructionsCounter === 4) {
+      this.props.history.push("/quiz");
+    }
+  };
 
+  componentDidUpdate() {}
   render() {
     return (
-      <>
+      <Fragment>
         <div style={{ height: "42px", display: "flex" }}>
           <BackButton
             onClick={() => {
-              this.setState({ counter: this.state.counter - 1 }, () => {
-                if (this.state.counter === -1) this.props.history.push("/")
-              })
+              if (this.props.instructionsCounter === 1) this.props.history.push("/");
+              else this.props.decrementInstructionsCounter();
             }}
             margin="22px 0px 20px 20px"
           />
-          <ProgressBar counter={this.state.counter + 1} maxCounter={4}></ProgressBar>
+          <ProgressBar maxCounter={4}></ProgressBar>
           <Button
             margin="22px 20px 0px 0px"
             hoverColor="#70B1FA"
@@ -46,6 +48,12 @@ class QuizInstructions extends Component {
             padding="2px 2px 0px 4px"
             desktoppadding="2px 2px 0px 4px"
             to="/quiz"
+            onClick={() => {
+              let i = this.props.instructionsCounter;
+              while (i-- !== 1) {
+                this.props.decrementInstructionsCounter();
+              }
+            }}
           >
             skip
           </Button>
@@ -56,7 +64,7 @@ class QuizInstructions extends Component {
           bg={`url(${image}) space center whitesmoke`}
           color="#fff"
           info={
-            <>
+            <Fragment>
               <style>{`.ant-card-body{ margin:auto }`}</style>
               <p
                 style={{
@@ -65,13 +73,13 @@ class QuizInstructions extends Component {
                   padding: "20px 10px",
                   margin: "28px 0px",
                   color: "#000",
-                  "font-size": `${this.state.counter === 3 ? "35px" : "24px"}`,
+                  "font-size": `${this.props.instructionsCounter === 3 ? "35px" : "24px"}`,
                   "font-weight": "bold"
                 }}
               >
-                {this.state.instructions[this.state.counter]}
+                {this.state.instructions[this.props.instructionsCounter - 1]}
               </p>
-            </>
+            </Fragment>
           }
         ></Card>
         <p
@@ -81,10 +89,24 @@ class QuizInstructions extends Component {
             "justify-content": "center"
           }}
         >
-          {this.state.counter < 3 ? "Tap the card to next" : "Tap the card to start"}
+          {this.props.instructionsCounter < 3 ? "Tap the card to next" : "Tap the card to start"}
         </p>
-      </>
-    )
+      </Fragment>
+    );
   }
 }
-export default QuizInstructions
+
+const mapState = state => {
+  return {
+    instructionsCounter: state.instructionsCounter
+  };
+};
+
+const mapAction = dispatch => {
+  return bindActionCreators({ incrementInstructionsCounter, decrementInstructionsCounter }, dispatch);
+};
+
+export default connect(
+  mapState,
+  mapAction
+)(QuizInstructions);

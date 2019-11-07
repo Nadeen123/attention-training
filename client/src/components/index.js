@@ -1,15 +1,15 @@
-import React from "react"
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
-import Home from "./Home"
-import QuizInstructions from "./QuizInstructions"
-import Quiz from "./QuizPage"
-import Dashboard from "./Dashboard"
-import Result from "./Results"
-import Skills from "./Skills"
-import IndividualSkill from "./IndividualSkill"
-import AboutUs from "./AboutUs"
-import NotFound from "../components/404NotFound"
-import BasicInformation from "./BasicInformation"
+import React from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import Home from "./Home";
+import QuizInstructions from "./QuizInstructions";
+import Quiz from "./QuizPage";
+import Dashboard from "./Dashboard";
+import Result from "./Results";
+import Skills from "./Skills";
+import IndividualSkill from "./IndividualSkill";
+import AboutUs from "./AboutUs";
+import NotFound from "../components/404NotFound";
+import BasicInformation from "./BasicInformation";
 
 const Routes = () => {
   return (
@@ -27,7 +27,7 @@ const Routes = () => {
         <Route component={NotFound} />
       </Switch>
     </Router>
-  )
-}
+  );
+};
 
-export default Routes
+export default Routes;
