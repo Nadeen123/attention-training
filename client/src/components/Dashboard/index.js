@@ -1,5 +1,5 @@
-import React from "react"
-import BackButton from "../sharedComponent/BackButton"
+import React, { Fragment } from "react";
+import BackButton from "../sharedComponent/BackButton";
 import {
   Header,
   DashboardCard,
@@ -11,24 +11,24 @@ import {
   Buttuns,
   RestartImg,
   AboutImg
-} from "./DashboardStyledComponent"
-import cardLogo from "../../assets/icon.png"
-import secondLogo from "../../assets/icon2.png"
-import StyledLink from "../sharedComponent/Button"
-import restartVector from "../../assets/restart.png"
-import aboutUs from "../../assets/AboutUs.png"
-import { connect } from "react-redux"
-import { bindActionCreators } from "redux"
-import { restart } from "../../actions"
+} from "./DashboardStyledComponent";
+import cardLogo from "../../assets/icon.png";
+import secondLogo from "../../assets/icon2.png";
+import StyledLink from "../sharedComponent/Button";
+import restartVector from "../../assets/restart.png";
+import aboutUs from "../../assets/AboutUs.png";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { restart } from "../../actions";
+
 const Dashboard = ({ history, ...props }) => {
-  console.log(props, "000000")
   return (
-    <>
+    <Fragment>
       <BackButton history={history}></BackButton>
       <PageWrapper>
         <Header>Dashboard</Header>
         {props.isCompleted ? (
-          <>
+          <Fragment>
             {/* card1 */}
             <DashboardCard>
               <Titlewrap>
@@ -66,7 +66,7 @@ const Dashboard = ({ history, ...props }) => {
                 SEE BASICS
               </StyledLink>
             </DashboardCard>{" "}
-          </>
+          </Fragment>
         ) : null}
 
         {/* card3 */}
@@ -92,17 +92,17 @@ const Dashboard = ({ history, ...props }) => {
           </StyledLink>
         </Buttuns>
       </PageWrapper>
-    </>
-  )
-}
+    </Fragment>
+  );
+};
 
 const mapAction = dispatch => {
-  return bindActionCreators({ restart }, dispatch)
-}
+  return bindActionCreators({ restart }, dispatch);
+};
 const mapState = state => ({
   isCompleted: state.isCompleted
-})
+});
 export default connect(
   mapState,
   mapAction
-)(Dashboard)
+)(Dashboard);
