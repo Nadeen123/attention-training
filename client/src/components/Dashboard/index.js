@@ -19,7 +19,7 @@ import restartVector from "../../assets/restart.png";
 import aboutUs from "../../assets/AboutUs.png";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { restart } from "../../actions";
+import { restart } from "../../redux/actionCreators";
 
 const Dashboard = ({ history, ...props }) => {
   return (
@@ -100,7 +100,7 @@ const mapAction = dispatch => {
   return bindActionCreators({ restart }, dispatch);
 };
 const mapState = state => ({
-  isCompleted: state.isCompleted
+  isCompleted: state.score.isCompleted
 });
 export default connect(
   mapState,

@@ -1,10 +1,10 @@
-import React, { Component, Fragment } from "react"
-import resultsImg from "../../assets/results.png"
-import resutlsData from "../resultsData"
-import Button from "../sharedComponent/Button"
-import { Container, Header, TypeContainer, Img, Type, Description, SkillsLink } from "./style.Results"
-import BackButton from "../sharedComponent/BackButton"
-import { connect } from "react-redux"
+import React, { Component, Fragment } from "react";
+import resultsImg from "../../assets/results.png";
+import resutlsData from "../../resultsData";
+import Button from "../sharedComponent/Button";
+import { Container, Header, TypeContainer, Img, Type, Description, SkillsLink } from "./style.Results";
+import BackButton from "../sharedComponent/BackButton";
+import { connect } from "react-redux";
 class Results extends Component {
   calId() {
     return this.props.inattentionScore > 12 && this.props.hyperactivityScore > 12
@@ -13,17 +13,15 @@ class Results extends Component {
       ? 1 /* id=1 --- '/result/1' */
       : this.props.hyperactivityScore > 12
       ? 2 /* id=2 --- '/result/2' */
-      : 4 /* id=4 --- '/result/4' */
+      : 4; /* id=4 --- '/result/4' */
   }
 
   random() {
-    return Math.floor(Math.random() * 6 + 1)
+    return Math.floor(Math.random() * 6 + 1);
   }
 
   render() {
-    const id = this.calId()
-
-    console.log(this.props.location.state, "lll")
+    const id = this.calId();
     return (
       <Fragment>
         <BackButton position="absolute" margin="22px" history={this.props.history}></BackButton>
@@ -48,12 +46,12 @@ class Results extends Component {
           ) : null}
         </Container>
       </Fragment>
-    )
+    );
   }
 }
 const mapState = state => ({
-  inattentionScore: state.inattentionScore,
-  hyperactivityScore: state.hyperactivityScore
-})
+  inattentionScore: state.score.inattentionScore,
+  hyperactivityScore: state.score.hyperactivityScore
+});
 
-export default connect(mapState)(Results)
+export default connect(mapState)(Results);

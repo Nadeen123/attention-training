@@ -6,7 +6,7 @@ import Card from "../Card";
 import ProgressBar from "../sharedComponent/ProgressBar";
 import image from "../../assets/quizInst.png";
 import { bindActionCreators } from "redux";
-import { incrementInstructionsCounter, decrementInstructionsCounter } from "../../actions";
+import { incrementInstructionsCounter, decrementInstructionsCounter } from "../../redux/actionCreators";
 class QuizInstructions extends Component {
   state = {
     instructions: [

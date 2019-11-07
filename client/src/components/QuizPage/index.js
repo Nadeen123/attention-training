@@ -8,7 +8,7 @@ import {
   refreshFlag,
   totalScore,
   setIsCompleted
-} from "../../actions";
+} from "../../redux/actionCreators";
 import Button from "../sharedComponent/Button";
 import BackButton from "../sharedComponent/BackButton";
 import Card from "../Card";
@@ -21,6 +21,7 @@ import StyleSwal from "./swalStyle";
 import { CardsAnimation } from "../Card/style";
 import Confetti from "react-confetti";
 import { bindActionCreators } from "redux";
+import { scoreReducer } from "../../redux/reducers";
 
 class Quiz extends Component {
   /**
@@ -78,7 +79,7 @@ class Quiz extends Component {
       if (result.value) {
         this.props.totalScore(0, 0, 0); // localStorage.clear()
         this.props.setIsCompleted(false);
-        localStorage.setItem("complete", false);
+        localStorage.setItem("complete", "");
         this.props.history.push("/dashboard");
       } else {
       }
@@ -164,7 +165,6 @@ class Quiz extends Component {
   };
   render() {
     if (this.props.flag) this.props.refreshFlag();
-    .log(this.props.flag, "50000");
     const question = questions[this.props.counter - 1];
     return this.props.flag ? null : this.props.percent === 50 ? (
       <CircleProgressBar
@@ -235,11 +235,10 @@ class Quiz extends Component {
 }
 const mapStateToProps = state => {
   return {
+    ...state.score,
     counter: state.counter,
-    score: state.score,
     percent: state.percent,
-    flag: state.flag,
-    isCompleted: state.isCompleted
+    flag: state.score.flag
   };
 };
 
